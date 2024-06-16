@@ -7,6 +7,8 @@ esphome:
   # Automatically add the mac address to the name
   # so you can use a single firmware for all devices
   name_add_mac_suffix: true
+  platformio_options:
+    board_build.arduino.memory_type: qio_opi
 
   # This will allow for (future) project identification,
   # configuration and updates.
@@ -15,44 +17,123 @@ esphome:
     version: "1.0"
 
 esp32:
-  board: esp32dev
+  board: esp32-s3-devkitc-1
+  variant: esp32s3
+  flash_size: 16MB
+  partitions: "default_16MB.csv"
   framework:
     type: arduino
 
 # To be able to get logs from the device via serial and api.
 logger:
+  level: DEBUG
 
 # API is a requirement of the dashboard import.
 api:
-
-# OTA is required for Over-the-Air updating
-ota:
 
 # This should point to the public location of this yaml file.
 dashboard_import:
   package_import_url: github://esphome/esphome-project-template/project-template-esp32.yaml@main
 
 wifi:
-  # Set up a wifi access point using the device name above
-  ap:
-    password: "12345678"
+  ssid: Awesome.
+  password: baconsandwich!12345
+  fast_connect: on
 
-# In combination with the `ap` this allows the user
-# to provision wifi credentials to the device.
-captive_portal:
+psram:
+  mode: octal
+  speed: 80MHz
 
-##########################################################
-# Most projects should not remove anything from above here
-# and should just modify the name, project name/version 
-# and git url for the dashboard_import
-##########################################################
+external_components:
+ - source: github://clydebarrow/esphome@lvgl_original
+   components: [ lvgl ]
 
+color:
+  - id: gray
+    red: 50%
+    green: 50%
+    blue: 50%
 
-# Sets up Bluetooth LE (Only on ESP32) to allow the user
-# to provision wifi credentials to the device.
-esp32_improv:
-  authorizer: none
+font:
+  - file: "gfonts://Roboto"
+    id: web_font
+    size: 20
 
-# Sets up the improv via serial client for Wi-Fi provisioning.
-# Handy if your device has a usb port for the user to add credentials when they first get it.
-improv_serial:
+spi:
+  clk_pin: 12
+  mosi_pin: 11
+  miso_pin: 13
+
+display:
+  - platform: ili9xxx
+    model: gc9a01a
+    auto_clear_enabled: false
+    id: gca901_display1
+    cs_pin: GPIO21 # CS1
+    dc_pin:
+      number: GPIO5
+      allow_other_uses: true
+    reset_pin:
+      number: GPIO6
+    dimensions:
+      height: 240
+      width: 240
+    rotation: 90°
+    lambda: |-
+      it.print(50, 50, id(web_font), "kill me1!");
+  - platform: ili9xxx
+    model: gc9a01a
+    auto_clear_enabled: false
+    id: gca901_display4
+    cs_pin: GPIO7 # CS4
+    dc_pin:
+      number: GPIO5
+      allow_other_uses: true
+    dimensions:
+      height: 240
+      width: 240
+    rotation: 90°
+    lambda: |-
+      it.print(50, 50, id(web_font), "kill me4!");
+  - platform: ili9xxx
+    model: gc9a01a
+    auto_clear_enabled: false
+    id: gca901_display5
+    cs_pin: GPIO38 # CS5
+    dc_pin:
+      number: GPIO5
+      allow_other_uses: true
+    dimensions:
+      height: 240
+      width: 240
+    rotation: 90°
+    lambda: |-
+      it.print(50, 50, id(web_font), "kill me5!");
+  - platform: ili9xxx
+    model: gc9a01a
+    auto_clear_enabled: false
+    id: gca901_display6
+    cs_pin: GPIO45 # CS6
+    dc_pin:
+      number: GPIO5
+      allow_other_uses: true
+    dimensions:
+      height: 240
+      width: 240
+    rotation: 90°
+    lambda: |-
+      it.print(50, 50, id(web_font), "kill me6!");
+  - platform: ili9xxx
+    model: gc9a01a
+    auto_clear_enabled: false
+    id: gca901_display7
+    cs_pin: GPIO46 # CS7
+    dc_pin:
+      number: GPIO5
+      allow_other_uses: true
+    dimensions:
+      height: 240
+      width: 240
+    rotation: 90°
+    lambda: |-
+      it.print(50, 50, id(web_font), "kill me7!");

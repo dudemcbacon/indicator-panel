@@ -1,0 +1,233 @@
+# Before asking any questions - read the docs!: https://deploy-preview-3510--esphome.netlify.app/components/lvgl.html
+
+esphome:
+  name: t-embed
+  friendly_name: LVGL Test on T-Embed
+  platformio_options:
+    board_build.flash_mode: dio
+
+esp32:
+  board: esp32-s3-devkitc-1
+  variant: esp32s3
+  framework:
+    type: esp-idf
+
+logger:
+  level: DEBUG
+  hardware_uart: USB_SERIAL_JTAG
+
+wifi:
+  ssid: Awesome.
+  password: baconsandwich!12345
+  fast_connect: on
+
+external_components:
+ - source: github://clydebarrow/esphome@lvgl_original
+   components: [ lvgl ] 
+
+power_supply:
+  - id: power_on
+    enable_on_boot: true
+    pin:
+      ignore_strapping_warning: true
+      number: GPIO46
+
+spi:
+  clk_pin: GPIO12
+  mosi_pin: GPIO11
+  interface: hardware
+
+output:
+  - platform: ledc
+    pin:
+      number: GPIO15
+    id: backlight_output
+
+light:
+  - platform: monochromatic
+    output: backlight_output
+    name: LCD Backlight
+    id: led
+    restore_mode: ALWAYS_ON
+    default_transition_length: 0s
+
+display:
+  - platform: ili9xxx
+    id: lcd_display
+    model: st7789v
+    dimensions:
+      height: 170
+      width: 320
+      offset_height: 35
+      offset_width: 0
+    transform:
+      swap_xy: true
+      mirror_x: false
+      mirror_y: true
+    data_rate: 80MHz
+    cs_pin: 10
+    dc_pin: GPIO13
+    reset_pin: GPIO9
+    update_interval: never
+    auto_clear_enabled: false
+    invert_colors: true
+
+sensor:
+  - platform: rotary_encoder
+    name: "Rotary Encoder"
+    id: encoder
+    pin_a: 2
+    pin_b: 1
+    internal: true
+
+binary_sensor:
+  - platform: gpio
+    id: pushbutton
+    name: Pushbutton
+    pin:
+      number: 0
+      inverted: true
+      ignore_strapping_warning: true
+
+time:
+  - platform: sntp
+    id: time_comp
+    on_time_sync:
+      then:
+        - script.execute: time_update
+
+script:
+  - id: time_update
+    then:
+      - lvgl.indicator.line.update:
+          id: minute_hand
+          value: !lambda |-
+            return id(time_comp).now().minute;
+      - lvgl.indicator.line.update:
+          id: hour_hand
+          value: !lambda |-
+            auto now = id(time_comp).now();
+            return std::fmod(now.hour, 12) * 60 + now.minute;
+      - lvgl.label.update:
+          id: date_label
+          text: !lambda |-
+            static const char * const mon_names[] = {"JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"};
+            static char date_buf[8];
+            auto now = id(time_comp).now();
+            snprintf(date_buf, sizeof(date_buf), "%s %2d", mon_names[now.month-1], now.day_of_month);
+            return date_buf;
+      - lvgl.label.update:
+          id: day_label
+          text: !lambda |-
+            static const char * const day_names[] = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
+            return day_names[id(time_comp).now().day_of_week-1];
+
+interval:
+  - interval: 1min
+    then:
+      - script.execute: time_update
+
+lvgl:
+  log_level: INFO
+  rotary_encoders:
+    sensor: encoder
+    binary_sensor: pushbutton
+    group: general
+  color_depth: 16
+  bg_color: 0x0F0F0F
+  text_font: unscii_8
+  align: center
+  style_definitions:
+    - id: date_style
+      text_font: unscii_8
+      align: center
+      text_color: 0x000000
+      bg_opa: cover
+      radius: 4
+      pad_all: 2
+  widgets:
+    - obj: # Clock container
+        height: size_content
+        width: size_content
+        widgets:
+          - meter: # Gradient color  arc
+              height: 160
+              width: 160
+              align: center
+              bg_color: 0
+              scales:
+                angle_range: 360
+                rotation: 255
+                range_from: 0
+                range_to: 12
+                ticks:
+                  width: 35
+                  count: 13
+                  length: 8
+                indicators:
+                  - ticks:
+                      local: true
+                      start_value: 0
+                      end_value: 12
+                      color_start: 0xFF0000
+                      color_end: 0x0000FF
+          - meter:
+              height: 160
+              width: 160
+              align: center
+                    
+              bg_opa: TRANSP
+              text_color: 0xFFFFFF
+              scales:
+                - ticks:
+                    width: 1
+                    count: 61
+                    length: 10
+                    color: 0xFFFFFF
+                  range_from: 0
+                  range_to: 60
+                  angle_range: 360
+                  rotation: 270
+                  indicators:
+                    - line:
+                        id: minute_hand
+                        width: 3
+                        color: 0xE0E0E0
+                        r_mod: -1
+
+                - 
+                  angle_range: 330
+                  rotation: 300
+                  range_from: 1
+                  range_to: 12
+                  ticks:
+                    width: 1
+                    count: 12
+                    length: 1
+                    major:
+                      stride: 1
+                      width: 4
+                      length: 8
+                      color: 0xC0C0C0
+                      label_gap: 6
+
+                - angle_range: 360
+                  rotation: 270
+                  range_from: 0
+                  range_to: 720
+                  indicators:
+                    - line:
+                        id: hour_hand
+                        width: 4
+                        color: 0xA0A0A0
+                        r_mod: -20
+          - label:
+              styles: date_style
+              id: day_label
+              y: -20
+          - label:
+              id: date_label
+              styles: date_style
+              y: +20
+
+
