@@ -1,3 +1,4 @@
+---
 # These substitutions allow the end user to override certain values
 substitutions:
   name: "project-template"
@@ -26,7 +27,7 @@ esp32:
 
 # To be able to get logs from the device via serial and api.
 logger:
-  level: DEBUG
+  level: VERY_VERBOSE
 
 # API is a requirement of the dashboard import.
 api:
@@ -45,8 +46,8 @@ psram:
   speed: 80MHz
 
 external_components:
- - source: github://clydebarrow/esphome@lvgl_original
-   components: [ lvgl ]
+  - source: github://clydebarrow/esphome@lvgl_original
+    components: [lvgl]
 
 color:
   - id: gray
@@ -69,7 +70,7 @@ display:
     model: gc9a01a
     auto_clear_enabled: false
     id: gca901_display1
-    cs_pin: GPIO21 # CS1
+    cs_pin: GPIO21  # CS1
     dc_pin:
       number: GPIO5
       allow_other_uses: true
@@ -79,13 +80,14 @@ display:
       height: 240
       width: 240
     rotation: 90°
+    data_rate: 20MHz
     lambda: |-
       it.print(50, 50, id(web_font), "kill me1!");
   - platform: ili9xxx
     model: gc9a01a
     auto_clear_enabled: false
-    id: gca901_display4
-    cs_pin: GPIO7 # CS4
+    id: gca901_display2
+    cs_pin: GPIO48  # CS2
     dc_pin:
       number: GPIO5
       allow_other_uses: true
@@ -93,13 +95,44 @@ display:
       height: 240
       width: 240
     rotation: 90°
+    data_rate: 20MHz
+    lambda: |-
+      it.print(50, 50, id(web_font), "kill me2!");
+  - platform: ili9xxx
+    model: gc9a01a
+    auto_clear_enabled: false
+    id: gca901_display3
+    cs_pin: GPIO18  # CS3
+    dc_pin:
+      number: GPIO5
+      allow_other_uses: true
+    dimensions:
+      height: 240
+      width: 240
+    rotation: 90°
+    data_rate: 20MHz
+    lambda: |-
+      it.print(50, 50, id(web_font), "kill me3!");
+  - platform: ili9xxx
+    model: gc9a01a
+    auto_clear_enabled: false
+    id: gca901_display4
+    cs_pin: GPIO17  # CS4
+    dc_pin:
+      number: GPIO5
+      allow_other_uses: true
+    dimensions:
+      height: 240
+      width: 240
+    rotation: 90°
+    data_rate: 20MHz
     lambda: |-
       it.print(50, 50, id(web_font), "kill me4!");
   - platform: ili9xxx
     model: gc9a01a
     auto_clear_enabled: false
     id: gca901_display5
-    cs_pin: GPIO38 # CS5
+    cs_pin: GPIO38  # CS5
     dc_pin:
       number: GPIO5
       allow_other_uses: true
@@ -107,13 +140,14 @@ display:
       height: 240
       width: 240
     rotation: 90°
+    data_rate: 20MHz
     lambda: |-
       it.print(50, 50, id(web_font), "kill me5!");
   - platform: ili9xxx
     model: gc9a01a
     auto_clear_enabled: false
     id: gca901_display6
-    cs_pin: GPIO45 # CS6
+    cs_pin: GPIO45  # CS6
     dc_pin:
       number: GPIO5
       allow_other_uses: true
@@ -121,13 +155,14 @@ display:
       height: 240
       width: 240
     rotation: 90°
+    data_rate: 20MHz
     lambda: |-
       it.print(50, 50, id(web_font), "kill me6!");
   - platform: ili9xxx
     model: gc9a01a
     auto_clear_enabled: false
     id: gca901_display7
-    cs_pin: GPIO46 # CS7
+    cs_pin: GPIO46  # CS7
     dc_pin:
       number: GPIO5
       allow_other_uses: true
@@ -135,5 +170,21 @@ display:
       height: 240
       width: 240
     rotation: 90°
+    data_rate: 20MHz
     lambda: |-
       it.print(50, 50, id(web_font), "kill me7!");
+  - platform: ili9xxx
+    model: gc9a01a
+    auto_clear_enabled: false
+    id: gca901_display8
+    cs_pin: GPIO47  # CS8
+    dc_pin:
+      number: GPIO5
+      allow_other_uses: true
+    dimensions:
+      height: 240
+      width: 240
+    rotation: 90°
+    data_rate: 20MHz
+    lambda: |-
+      it.print(50, 50, id(web_font), "kill me8!");

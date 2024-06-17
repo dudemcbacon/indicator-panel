@@ -4,3 +4,4 @@
 /.esphome/
 /secrets.yaml
 /board/ind-backups/*
+board/~ind.kicad_sch.lck
