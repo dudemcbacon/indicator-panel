@@ -1,7 +1,7 @@
 ---
 # These substitutions allow the end user to override certain values
 substitutions:
-  name: "project-template"
+  name: "indicator-panel"
 
 esphome:
   name: "${name}"
@@ -27,27 +27,22 @@ esp32:
 
 # To be able to get logs from the device via serial and api.
 logger:
-  level: VERY_VERBOSE
+  level: DEBUG
 
 # API is a requirement of the dashboard import.
 api:
 
-# This should point to the public location of this yaml file.
-dashboard_import:
-  package_import_url: github://esphome/esphome-project-template/project-template-esp32.yaml@main
-
 wifi:
-  ssid: Awesome.
-  password: baconsandwich!12345
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
   fast_connect: on
+
+ota:
+  platform: esphome
 
 psram:
   mode: octal
   speed: 80MHz
-
-external_components:
-  - source: github://clydebarrow/esphome@lvgl_original
-    components: [lvgl]
 
 color:
   - id: gray
@@ -63,14 +58,14 @@ font:
 spi:
   clk_pin: 12
   mosi_pin: 11
-  miso_pin: 13
 
 display:
   - platform: ili9xxx
     model: gc9a01a
     auto_clear_enabled: false
     id: gca901_display1
-    cs_pin: GPIO21  # CS1
+    invert_colors: false
+    cs_pin: GPIO21 # CS1
     dc_pin:
       number: GPIO5
       allow_other_uses: true
@@ -87,7 +82,8 @@ display:
     model: gc9a01a
     auto_clear_enabled: false
     id: gca901_display2
-    cs_pin: GPIO48  # CS2
+    invert_colors: false
+    cs_pin: GPIO48 # CS2
     dc_pin:
       number: GPIO5
       allow_other_uses: true
@@ -102,7 +98,8 @@ display:
     model: gc9a01a
     auto_clear_enabled: false
     id: gca901_display3
-    cs_pin: GPIO18  # CS3
+    invert_colors: false
+    cs_pin: GPIO18 # CS3
     dc_pin:
       number: GPIO5
       allow_other_uses: true
@@ -117,7 +114,8 @@ display:
     model: gc9a01a
     auto_clear_enabled: false
     id: gca901_display4
-    cs_pin: GPIO17  # CS4
+    invert_colors: false
+    cs_pin: GPIO17 # CS4
     dc_pin:
       number: GPIO5
       allow_other_uses: true
@@ -132,7 +130,8 @@ display:
     model: gc9a01a
     auto_clear_enabled: false
     id: gca901_display5
-    cs_pin: GPIO38  # CS5
+    invert_colors: false
+    cs_pin: GPIO38 # CS5
     dc_pin:
       number: GPIO5
       allow_other_uses: true
@@ -147,7 +146,8 @@ display:
     model: gc9a01a
     auto_clear_enabled: false
     id: gca901_display6
-    cs_pin: GPIO45  # CS6
+    invert_colors: false
+    cs_pin: GPIO45 # CS6
     dc_pin:
       number: GPIO5
       allow_other_uses: true
@@ -162,7 +162,8 @@ display:
     model: gc9a01a
     auto_clear_enabled: false
     id: gca901_display7
-    cs_pin: GPIO46  # CS7
+    invert_colors: false
+    cs_pin: GPIO46 # CS7
     dc_pin:
       number: GPIO5
       allow_other_uses: true
@@ -177,7 +178,8 @@ display:
     model: gc9a01a
     auto_clear_enabled: false
     id: gca901_display8
-    cs_pin: GPIO47  # CS8
+    invert_colors: false
+    cs_pin: GPIO47 # CS8
     dc_pin:
       number: GPIO5
       allow_other_uses: true
@@ -188,3 +190,86 @@ display:
     data_rate: 20MHz
     lambda: |-
       it.print(50, 50, id(web_font), "kill me8!");
+#  - platform: ili9xxx
+#    model: gc9a01a
+#    auto_clear_enabled: false
+#    id: gca901_display9
+#    cs_pin: GPIO18  # CS9
+#    dc_pin:
+#      number: GPIO5
+#      allow_other_uses: true
+#    dimensions:
+#      height: 240
+#      width: 240
+#    rotation: 90°
+#    data_rate: 20MHz
+#    lambda: |-
+#      it.print(50, 50, id(web_font), "kill me9!");
+
+output:
+  - id: led_1_output
+    platform: gpio
+    pin: GPIO3
+  - id: led_2_output
+    platform: gpio
+    pin: GPIO15
+  - id: led_3_output
+    platform: gpio
+    pin: GPIO13
+  - id: led_4_output
+    platform: gpio
+    pin: GPIO10
+  - id: led_5_output
+    platform: gpio
+    pin: GPIO9
+  - id: led_6_output
+    platform: gpio
+    pin: GPIO8
+  - id: led_7_output
+    platform: gpio
+    pin: GPIO7
+  - id: led_8_output
+    platform: gpio
+    pin: GPIO4
+
+light:
+  - platform: binary
+    id: led_1
+    name: led_1
+    restore_mode: ALWAYS_ON
+    output: led_1_output
+  - platform: binary
+    id: led_2
+    name: led_2
+    restore_mode: ALWAYS_ON
+    output: led_2_output
+  - platform: binary
+    id: led_3
+    name: led_3
+    restore_mode: ALWAYS_ON
+    output: led_3_output
+  - platform: binary
+    id: led_4
+    name: led_4
+    restore_mode: ALWAYS_ON
+    output: led_4_output
+  - platform: binary
+    id: led_5
+    name: led_5
+    restore_mode: ALWAYS_ON
+    output: led_5_output
+  - platform: binary
+    id: led_6
+    name: led_6
+    restore_mode: ALWAYS_ON
+    output: led_6_output
+  - platform: binary
+    id: led_7
+    name: led_7
+    restore_mode: ALWAYS_ON
+    output: led_7_output
+  - platform: binary
+    id: led_8
+    name: led_8
+    restore_mode: ALWAYS_ON
+    output: led_8_output
